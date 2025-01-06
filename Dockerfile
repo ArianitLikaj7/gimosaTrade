@@ -12,4 +12,4 @@ FROM openjdk:17-jdk-slim
 COPY --from=build /target/gimosa-trade-0.0.1-SNAPSHOT.jar gimosa-trade.jar
 # ENV PORT=8080
 EXPOSE 8080
-ENTRYPOINT ["java","-jar","bakery-be.jar"]
+ENTRYPOINT ["java","-jar","gimosa-trade.jar"]
