@@ -1,0 +1,14 @@
+package com.gimosa.gimosa_trade.repository;
+
+import com.gimosa.gimosa_trade.model.Client;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface ClientRepository extends JpaRepository<Client, Long> {
+    @Query("SELECT c FROM Client c")
+    List<Client> findAll();
+}
