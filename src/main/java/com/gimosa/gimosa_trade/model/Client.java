@@ -1,10 +1,13 @@
 package com.gimosa.gimosa_trade.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 @Entity
 @Getter
@@ -22,7 +25,8 @@ public class Client {
     private String oib;
     private String email;
     private String phone;
-    private String date;
-    private Integer pallets;
-    private Integer packages;
+
+    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<Order> orders;
 }

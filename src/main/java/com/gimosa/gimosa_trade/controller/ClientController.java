@@ -1,35 +1,29 @@
 package com.gimosa.gimosa_trade.controller;
 
 import com.gimosa.gimosa_trade.model.Client;
-import com.gimosa.gimosa_trade.request.ClientRequest;
+import com.gimosa.gimosa_trade.model.Order;
 import com.gimosa.gimosa_trade.service.ClientService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/api/clients")
-@CrossOrigin(origins = "http://localhost:4200")
+@Slf4j
 public class ClientController {
+    private final ClientService clientService;
 
-    @Autowired
-    private ClientService clientService;
+    public ClientController(ClientService clientService) {
+        this.clientService = clientService;
+    }
 
     @PostMapping
-    public ResponseEntity<Client> createClient(@RequestBody ClientRequest clientRequest) {
-        Client client = new Client();
-        client.setName(clientRequest.getName());
-        client.setAddress(clientRequest.getAddress());
-        client.setOib(clientRequest.getOib());
-        client.setEmail(clientRequest.getEmail());
-        client.setPhone(clientRequest.getPhone());
-        client.setDate(clientRequest.getDate());
-        client.setPallets(clientRequest.getPallets());
-        client.setPackages(clientRequest.getPackages());
+    public ResponseEntity<Client> createClient(@RequestBody Client client) {
+        log.info("object {}",client);
         Client savedClient = clientService.createClient(client);
-
         return ResponseEntity.ok(savedClient);
     }
 
@@ -40,35 +34,37 @@ public class ClientController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Client> getClient(@PathVariable Long id) {
-        Client client = clientService.getClientById(id);
-        return ResponseEntity.ok(client);
+    public ResponseEntity<Client> getClientById(@PathVariable Long id) {
+        return clientService.getClientById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteClient(@PathVariable Long id) {
-        clientService.deleteClient(id);
-        return ResponseEntity.noContent().build();
+    @PostMapping("/{clientId}/orders")
+    public ResponseEntity<Order> createOrder(@PathVariable Long clientId, @RequestBody Order order) {
+        Order savedOrder = clientService.createOrder(clientId, order);
+        return ResponseEntity.ok(savedOrder);
+    }
+
+    @GetMapping("/{clientId}/orders")
+    public ResponseEntity<List<Order>> getOrdersByClientId(@PathVariable Long clientId) {
+        List<Order> orders = clientService.getOrdersByClientId(clientId);
+        return ResponseEntity.ok(orders);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Client> updateClient(@PathVariable Long id, @RequestBody ClientRequest clientRequest) {
-        Client existingClient = clientService.getClientById(id);
-        if (existingClient == null) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<Client> updateClient(@PathVariable Long id, @RequestBody Client updatedClient) {
+        Client savedClient = clientService.updateClient(id, updatedClient);
+        return ResponseEntity.ok(savedClient);
+    }
 
-        existingClient.setName(clientRequest.getName());
-        existingClient.setAddress(clientRequest.getAddress());
-        existingClient.setOib(clientRequest.getOib());
-        existingClient.setEmail(clientRequest.getEmail());
-        existingClient.setPhone(clientRequest.getPhone());
-        existingClient.setDate(clientRequest.getDate());
-        existingClient.setPallets(clientRequest.getPallets());
-        existingClient.setPackages(clientRequest.getPackages());
-        Client updatedClient = clientService.updateClient(existingClient);
+    @PutMapping("/{clientId}/orders/{orderId}")
+    public ResponseEntity<Order> updateOrder(@PathVariable Long clientId, @PathVariable Long orderId, @RequestBody Order updatedOrder) {
+        clientService.getClientById(clientId)
+                .orElseThrow(() -> new IllegalArgumentException("Client not found with ID: " + clientId));
 
-        return ResponseEntity.ok(updatedClient);
+        Order savedOrder = clientService.updateOrder(orderId, updatedOrder);
+        return ResponseEntity.ok(savedOrder);
     }
 
 }
