@@ -4,6 +4,7 @@ import com.gimosa.gimosa_trade.model.Client;
 import com.gimosa.gimosa_trade.model.Order;
 import com.gimosa.gimosa_trade.repository.ClientRepository;
 import com.gimosa.gimosa_trade.repository.OrderRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -62,4 +63,10 @@ public class ClientService {
         return orderRepository.save(existingOrder);
     }
 
+    @Transactional
+    public void deleteClientById(Long clientId) {
+        Client client = clientRepository.findById(clientId)
+                .orElseThrow(() -> new IllegalArgumentException("Client not found with ID: " + clientId));
+        clientRepository.delete(client);
+    }
 }
