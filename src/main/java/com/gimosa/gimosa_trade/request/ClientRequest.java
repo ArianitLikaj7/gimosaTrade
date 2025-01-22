@@ -11,6 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ClientRequest {
     private String name;
+    private String clientName;
     private String address;
     private String oib;
     private String email;

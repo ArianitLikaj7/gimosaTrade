@@ -46,6 +46,7 @@ public class ClientService {
                 .orElseThrow(() -> new IllegalArgumentException("Client not found with ID: " + clientId));
 
         existingClient.setName(updatedClient.getName());
+        existingClient.setClientName(updatedClient.getClientName());
         existingClient.setAddress(updatedClient.getAddress());
         existingClient.setOib(updatedClient.getOib());
         existingClient.setEmail(updatedClient.getEmail());

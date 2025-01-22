@@ -1,0 +1,1 @@
+ALTER TABLE clients add column client_name VARCHAR(255);

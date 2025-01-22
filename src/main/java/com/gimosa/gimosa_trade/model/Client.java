@@ -21,6 +21,8 @@ public class Client {
     private Long id;
 
     private String name;
+    @Column(name = "client_name")
+    private String clientName;
     private String address;
     private String oib;
     private String email;
